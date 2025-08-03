@@ -1,0 +1,22 @@
+<!-- Mobile Booking Widget -->
+<div class="booking-widget">
+  <div class="trip-toggle">
+    <button class="active">One Way</button>
+    <button>Round Trip</button>
+  </div>
+  
+  <div class="location-picker">
+    <input type="text" placeholder="From: Mahabubnagar Bus Stand">
+    <input type="text" placeholder="To: Hyderabad">
+  </div>
+  
+  <div class="datetime-picker">
+    <input type="date" min="2023-11-01">
+    <select>
+      <option>5:00 AM</option>
+      <option>6:30 AM</option>
+    </select>
+  </div>
+  
+  <button class="cta">Find Rides (₹250-350)</button>
+</div>  
