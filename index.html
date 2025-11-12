@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreshMart - Grocery Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <i class="fas fa-shopping-basket"></i>
+                <span>FreshMart</span>
+            </div>
+            
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search-input" placeholder="Search for groceries...">
+            </div>
+            
+            <nav>
+                <ul>
+                    <li><a href="#" class="active">Home</a></li>
+                    <li><a href="#" onclick="filterProducts('fruits')">Fruits & Vegetables</a></li>
+                    <li><a href="#" onclick="filterProducts('dairy')">Dairy & Eggs</a></li>
+                    <li><a href="#" onclick="filterProducts('bakery')">Bakery</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <button class="btn btn-outline" onclick="openAdminPanel()">
+                    <i class="fas fa-user-cog"></i> Admin
+                </button>
+                <button class="btn btn-primary" onclick="openCart()">
+                    <i class="fas fa-shopping-cart"></i> Cart (<span id="cart-count">0</span>)
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Banner -->
+        <section class="banner">
+            <h1>Fresh Groceries Delivered to Your Door</h1>
+            <p>Get the best quality fruits, vegetables, dairy and more at affordable prices</p>
+            <button class="btn btn-primary" onclick="filterProducts('all')">Shop Now <i class="fas fa-arrow-right"></i></button>
+        </section>
+
+        <!-- Advertising Banner 1 -->
+        <div class="ad-banner ad-banner-1">
+            <div class="ad-banner-content">
+                <h3>Weekend Special Offer!</h3>
+                <p>Get 20% off on all organic products this weekend</p>
+                <button class="btn" onclick="filterProducts('organic')">Shop Organic</button>
+            </div>
+        </div>
+
+        <!-- Category Navigation -->
+        <section class="category-nav">
+            <ul id="category-nav-list">
+                <!-- Categories will be dynamically loaded -->
+            </ul>
+        </section>
+
+        <!-- Featured Products -->
+        <h2 class="section-title"><i class="fas fa-star"></i> Fresh Picks</h2>
+        <div class="products-grid" id="products-container">
+            <!-- Products will be dynamically inserted here -->
+        </div>
+        
+        <!-- Loading Spinner -->
+        <div class="spinner" id="loading-spinner"></div>
+
+        <!-- Advertising Banner 2 -->
+        <div class="ad-banner ad-banner-2">
+            <div class="ad-banner-content">
+                <h3>Free Delivery!</h3>
+                <p>Orders over $50 get free delivery this month</p>
+                <button class="btn" onclick="openCart()">View Cart</button>
+            </div>
+        </div>
+
+        <!-- Seasonal Products -->
+        <h2 class="section-title"><i class="fas fa-leaf"></i> Seasonal Specials</h2>
+        <div class="products-grid" id="seasonal-container">
+            <!-- Seasonal products will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div id="cart-modal">
+        <div class="cart-content">
+            <div class="cart-header">
+                <h2>Your Cart</h2>
+                <button class="btn btn-outline" onclick="closeCart()"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div class="cart-items" id="cart-items">
+                <!-- Cart items will be dynamically inserted here -->
+            </div>
+            
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cart-total-price">$0.00</span>
+            </div>
+            
+            <div class="cart-actions">
+                <button class="btn btn-outline" onclick="closeCart()">Continue Shopping</button>
+                <button class="btn btn-primary" onclick="checkout()">Checkout</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notification-text">Product added to cart!</span>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-container">
+            <div class="footer-col">
+                <h3>FreshMart</h3>
+                <p>Your local grocery store for fresh produce and household essentials.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Categories</a></li>
+                    <li><a href="#">Weekly Deals</a></li>
+                    <li><a href="#">Delivery Areas</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Customer Service</h3>
+                <ul>
+                    <li><a href="#">FAQs</a></li>
+                    <li><a href="#">Delivery Policy</a></li>
+                    <li><a href="#">Returns & Refunds</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Contact Us</h3>
+                <ul>
+                    <li><i class="fas fa-map-marker-alt"></i> 123 Market St, City, Country</li>
+                    <li><i class="fas fa-phone"></i> +1 234 567 8900</li>
+                    <li><i class="fas fa-envelope"></i> info@freshmart.com</li>
+                    <li><i class="fab fa-whatsapp"></i> +1 234 567 8901</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            &copy; 2023 FreshMart. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

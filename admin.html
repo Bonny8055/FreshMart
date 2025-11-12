@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreshMart - Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .google-sheets-section {
+            margin-top: 40px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .sheets-container {
+            height: 600px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .sheets-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .admin-instructions {
+            background: var(--light-green);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .admin-instructions h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .admin-instructions ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+        
+        .admin-instructions li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <i class="fas fa-shopping-basket"></i>
+                <span>FreshMart Admin</span>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-primary" onclick="refreshData()">
+                    <i class="fas fa-sync-alt"></i> Refresh Data
+                </button>
+                <button class="btn btn-outline" onclick="window.close()">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Admin Instructions -->
+        <div class="admin-instructions">
+            <h3><i class="fas fa-info-circle"></i> Admin Instructions</h3>
+            <p>Use the Google Sheet below to manage your products and categories. Changes made in the sheet will automatically reflect in the store.</p>
+            <ul>
+                <li><strong>Products Sheet:</strong> Manage all your products with details like name, category, price, stock, etc.</li>
+                <li><strong>Categories Sheet:</strong> Manage product categories and their display names.</li>
+                <li><strong>Orders Sheet:</strong> View and manage customer orders.</li>
+                <li>Make sure to keep the column structure exactly as shown below.</li>
+                <li>Click "Refresh Data" to immediately update the store with your changes.</li>
+            </ul>
+        </div>
+
+        <!-- Admin Panel -->
+        <section id="admin-panel">
+            <div class="admin-header">
+                <h2><i class="fas fa-user-cog"></i> Admin Dashboard</h2>
+                <div>
+                    <button class="btn btn-primary" onclick="refreshData()">
+                        <i class="fas fa-sync-alt"></i> Refresh Data
+                    </button>
+                    <button class="btn btn-outline" onclick="openStore()">
+                        <i class="fas fa-store"></i> View Store
+                    </button>
+                </div>
+            </div>
+            
+            <div class="admin-tabs">
+                <div class="admin-tab active" onclick="openAdminTab('products')">Manage Products</div>
+                <div class="admin-tab" onclick="openAdminTab('categories')">Manage Categories</div>
+                <div class="admin-tab" onclick="openAdminTab('orders')">View Orders</div>
+                <div class="admin-tab" onclick="openAdminTab('sheets')">Google Sheets</div>
+            </div>
+            
+            <!-- Products Tab -->
+            <div id="products-tab" class="admin-section active">
+                <h3>Current Products</h3>
+                <div class="category-list" id="products-list">
+                    <!-- Products will be dynamically inserted here -->
+                </div>
+            </div>
+            
+            <!-- Categories Tab -->
+            <div id="categories-tab" class="admin-section">
+                <h3>Current Categories</h3>
+                <div class="category-list" id="categories-list">
+                    <!-- Categories will be dynamically inserted here -->
+                </div>
+            </div>
+            
+            <!-- Orders Tab -->
+            <div id="orders-tab" class="admin-section">
+                <h3>Recent Orders</h3>
+                <div class="admin-form">
+                    <div class="form-group">
+                        <label>Filter by Status:</label>
+                        <select class="form-control" id="order-filter">
+                            <option value="all">All Orders</option>
+                            <option value="new">New Orders</option>
+                            <option value="processing">Processing</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="orders-list" id="orders-list">
+                    <!-- Orders will be dynamically inserted here -->
+                </div>
+            </div>
+            
+            <!-- Google Sheets Tab -->
+            <div id="sheets-tab" class="admin-section">
+                <div class="google-sheets-section">
+                    <h3><i class="fab fa-google"></i> Google Sheets Management</h3>
+                    <p>Edit your products and categories directly in the Google Sheet below:</p>
+                    
+                    <div class="sheets-container">
+                        <iframe id="google-sheets-iframe" 
+                                src="https://docs.google.com/spreadsheets/d/1YOUR_SHEET_ID_HERE/edit?usp=sharing"
+                                allow="autoplay">
+                        </iframe>
+                    </div>
+                    
+                    <div style="margin-top: 20px; display: flex; gap: 15px; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="refreshData()">
+                            <i class="fas fa-sync-alt"></i> Refresh Data from Sheet
+                        </button>
+                        <button class="btn btn-outline" onclick="openSheetsInNewTab()">
+                            <i class="fas fa-external-link-alt"></i> Open Sheet in New Tab
+                        </button>
+                        <button class="btn btn-outline" onclick="showSheetInstructions()">
+                            <i class="fas fa-question-circle"></i> Sheet Instructions
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Sheet Structure Info -->
+                <div class="admin-instructions" style="margin-top: 30px;">
+                    <h4><i class="fas fa-table"></i> Google Sheet Structure</h4>
+                    <p><strong>Products Sheet Columns:</strong></p>
+                    <ul>
+                        <li><strong>A:</strong> ID (Number) - Unique identifier</li>
+                        <li><strong>B:</strong> Name (Text) - Product name</li>
+                        <li><strong>C:</strong> Category (Text) - Category ID</li>
+                        <li><strong>D:</strong> Price (Number) - Regular price</li>
+                        <li><strong>E:</strong> Discount Price (Number) - Optional discount price</li>
+                        <li><strong>F:</strong> Image URL (Text) - Product image URL</li>
+                        <li><strong>G:</strong> Stock (Number) - Available quantity</li>
+                        <li><strong>H:</strong> Description (Text) - Product description</li>
+                        <li><strong>I:</strong> Seasonal (TRUE/FALSE) - Is seasonal product</li>
+                    </ul>
+                    
+                    <p><strong>Categories Sheet Columns:</strong></p>
+                    <ul>
+                        <li><strong>A:</strong> ID (Text) - Category ID (e.g., "fruits")</li>
+                        <li><strong>B:</strong> Name (Text) - Display name (e.g., "Fruits & Vegetables")</li>
+                        <li><strong>C:</strong> Product Count (Number) - Number of products in category</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notification-text">Data refreshed successfully!</span>
+    </div>
+
+    <script src="admin-script.js"></script>
+</body>
+</html>
