@@ -21,7 +21,6 @@
     box-sizing: border-box;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-
 body {
     background-color: #f5f7f5;
     color: var(--dark);
@@ -36,13 +35,25 @@ body {
 
 /* Header Styles */
 header {
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    color: white;
-    padding: 15px 0;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    background: transparent;
     position: sticky;
     top: 0;
     z-index: 100;
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    gap: 15px;
+}
+
+/* Apply the green gradient only to the top header row so the categories area can be independent */
+.header-top {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
 .header-container {
@@ -51,66 +62,215 @@ header {
     align-items: center;
     flex-wrap: wrap;
     gap: 15px;
+    width: 100%;
 }
 
-.logo {
-    font-size: 24px;
+.logo-search-wrapper {
+    display: flex;
+    align-items: center;
+    /* reduced gap to move the search bar a little left */
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+
+.logo-brand {
+    font-size: 18px;
     font-weight: bold;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+    white-space: nowrap;
+    min-width: fit-content;
+    transition: all 0.3s ease;
+    flex: 0 0 auto;
 }
 
-.logo i {
-    font-size: 28px;
+.logo-brand i {
+    font-size: 22px;
 }
 
 .search-bar {
-    flex: 1;
-    max-width: 500px;
+    /* collapsed size: change the '45px' value below to adjust the collapsed width */
+    flex: 0 0 45px;
+    height: 40px;
     position: relative;
-}
-
-.search-bar input {
-    width: 100%;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 30px;
-    font-size: 1rem;
-    padding-left: 45px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.search-bar i {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--gray);
-}
-
-nav ul {
-    display: flex;
-    list-style: none;
-    gap: 20px;
-}
-
-nav a {
-    color: white;
-    text-decoration: none;
-    font-weight: 500;
-    padding: 5px 10px;
-    border-radius: 5px;
     transition: all 0.3s ease;
 }
 
-nav a:hover {
-    background: rgba(255,255,255,0.2);
+.search-bar.expanded {
+    flex: 1;
+    /* Adjust the expanded width of the search bar here (min-width) */
+    /* Change this value to make the expanded search larger or smaller */
+    min-width: 200px; /* <- adjust this number to change expanded size */
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    /* Make the search icon/text white for better contrast */
+    color: white;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.3s ease;
+}
+
+.search-bar.expanded .search-icon {
+    display: none;
+}
+
+.close-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray);
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.close-icon:hover {
+    color: var(--primary);
+}
+
+.search-bar input {
+    width: 0;
+    height: 40px;
+    padding: 8px 35px;
+    border: none;
+    border-radius: 25px;
+    font-size: 0.95rem;
+    box-shadow: none;
+    transition: all 0.3s ease;
+    background: white;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.search-bar.expanded input {
+    width: 100%;
+    padding: 10px 45px;
+    font-size: 1rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.search-bar.expanded input:focus {
+    outline: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+/* .logo-brand.hidden {
+    opacity: 0;
+    width: 0;
+    overflow: ;
+    margin: 0;
+    gap: 0;
+} */
+
+/* Quick Sheet button: appears when logo is hidden */
+#quick-sheet-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    min-width: 40px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: transparent;
+    color: white;
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.2s ease;
+}
+
+#quick-sheet-btn:hover {
+    background: rgba(255,255,255,0.06);
+}
+
+.header-nav { display: none !important; }
+.nav-icon { font-size: 20px; display: flex; align-items: center; justify-content: center; }
+
+/* New categories bar styles */
+.categories-bar {
+    background: #f5f7f5;
+    border-top: 1px solid rgba(255, 0, 0, 0.06);
+    transition: transform 0.28s cubic-bezier(.2,.9,.2,1), opacity 0.28s ease;
+    transform: translateY(0);
+    opacity: 1;
+    z-index: 100;
+}
+
+.categories-bar.hidden {
+    transform: translateY(-110%);
+    opacity: 0;
+}
+
+.categories-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 6px 15px;
+}
+
+/* Ensure the inner container animates with the bar when hidden */
+.categories-container.hidden {
+    transform: translateY(-110%);
+    opacity: 0;
+    transition: transform 0.28s cubic-bezier(.2,.9,.2,1), opacity 0.28s ease;
+    pointer-events: none;
+}
+
+.categories-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 8px;
+    list-style: none;
+    margin: 0;
+    padding: 6px 0;
+    align-items: center;
+}
+
+.categories-list a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: rgb(40, 183, 0);
+    text-decoration: none;
+    padding: 8px 6px;
+    border-radius: 8px;
+    transition: background 0.18s ease, transform 0.18s ease;
+}
+
+.categories-list a i {
+    font-size: 18px;
+}
+
+.categories-list a span { font-size: 0.75rem; }
+
+.categories-list a:hover { background: rgba(255,255,255,0.06); transform: translateY(-2px); }
+
+/* Hideable main category nav (content area) to match header categories bar */
+.category-nav {
+    transition: transform 0.28s cubic-bezier(.2,.9,.2,1), opacity 0.28s ease;
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.category-nav.hidden {
+    transform: translateY(-110%);
+    opacity: 0;
+    pointer-events: none;
 }
 
 .header-actions {
     display: flex;
     gap: 15px;
+    flex: 0 0 auto;
 }
 
 /* Button Styles */
@@ -230,11 +390,11 @@ nav a:hover {
 
 /* Category Navigation */
 .category-nav {
-    background: white;
+    background: transparent;
     padding: 15px;
     border-radius: 10px;
     margin: 20px 0;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    box-shadow: none;
     overflow-x: auto;
     white-space: nowrap;
 }
@@ -806,14 +966,47 @@ footer {
 
 @media (max-width: 768px) {
     .header-container {
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction: row;
+        align-items: center;
+        width: 100%;
     }
     
-    .search-bar {
-        max-width: 100%;
-        order: 3;
+    .logo-search-wrapper {
+        width: 200%;
+        gap: 8px;
+    }
+    
+    .logo-brand {
+        font-size: 16px;
+    }
+    
+    .logo-brand i {
+        font-size: 20px;
+    }
+    
+    .search-bar.expanded input {
+        padding: 10px 40px;
+        color: white;
+    }
+    
+    .header-nav ul {
         width: 100%;
+    }
+    
+    .header-nav a {
+        flex: 1;
+        padding: 12px 10px;
+        border-bottom: none;
+        border-top: 3px solid transparent;
+    }
+    
+    .header-nav a:hover {
+        background: rgba(255,255,255,0.1);
+        border-top: 3px solid white;
+    }
+    
+    .header-nav a.active {
+        border-top: 3px solid white;
     }
     
     .products-grid {
@@ -842,7 +1035,44 @@ footer {
     }
     
     .products-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+    
+    .product-card {
+        padding: 0;
+    }
+    
+    .product-image {
+        height: 120px;
+    }
+    
+    .product-info {
+        padding: 10px;
+    }
+    
+    .product-title {
+        font-size: 0.9rem;
+        height: 40px;
+    }
+    
+    .product-price {
+        font-size: 0.85rem;
+        margin-bottom: 10px;
+    }
+    
+    .price-current {
+        font-size: 1rem;
+    }
+    
+    .product-actions {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .btn-cart {
+        padding: 6px;
+        font-size: 0.75rem;
     }
     
     .category-item {
@@ -871,4 +1101,11 @@ footer {
         font-size: 0.9rem;
         display: none;
     }
+
+    .btn-red {
+    background: red;
+    color: white;
+    border: none;
+}
+
 }

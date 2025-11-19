@@ -8,13 +8,85 @@ let currentFilter = "all";
 const SHEET_ID = 'YOUR_GOOGLE_SHEET_ID_HERE'; // Replace with your Google Sheet ID
 const API_KEY = 'YOUR_GOOGLE_API_KEY_HERE'; // Replace with your Google API Key
 
-// Initialize page
+// Expand search bar on focus
+function expandSearch() {
+    const searchBar = document.querySelector('.search-bar');
+    const logoBrand = document.querySelector('.logo-brand');
+    const closeIcon = document.querySelector('.close-icon');
+    const categoriesBar = document.getElementById('categories-bar');
+    const categoryNav = document.querySelector('.category-nav');
+    const categoriesContainer = document.querySelector('.categories-container');
+
+    searchBar.classList.add('expanded');
+    logoBrand.classList.add('hidden');
+    if (categoriesBar) categoriesBar.classList.add('hidden');
+    if (categoriesContainer) categoriesContainer.classList.add('hidden');
+    if (closeIcon) closeIcon.style.display = 'block';
+    updateQuickSheetVisibility();
+}
+
+// Collapse search bar on blur
+function collapseSearch() {
+    const searchInput = document.getElementById('search-input');
+    const searchBar = document.querySelector('.search-bar');
+    const logoBrand = document.querySelector('.logo-brand');
+    const closeIcon = document.querySelector('.close-icon');
+    const categoriesBar = document.getElementById('categories-bar');
+    const categoryNav = document.querySelector('.category-nav');
+
+    // Only collapse if search bar is empty
+    if (!searchInput || searchInput.value.trim() === '') {
+        if (searchBar) searchBar.classList.remove('expanded');
+        if (logoBrand) logoBrand.classList.remove('hidden');
+        if (categoriesBar) categoriesBar.classList.remove('hidden');
+        if (categoriesContainer) categoriesContainer.classList.remove('hidden');
+        if (closeIcon) closeIcon.style.display = 'none';
+        updateQuickSheetVisibility();
+    }
+}
+
+// Focus search input when search icon is clicked
+function focusSearch() {
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) searchInput.focus();
+}
+
+// Clear search input and focus it (keeps search expanded)
+function clearSearch() {
+    const categoriesBar = document.getElementById('categories-bar');
+    const categoryNav = document.querySelector('.category-nav');
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+        searchInput.value = '';
+        searchInput.focus();
+    }
+    if (categoriesBar) categoriesBar.classList.add('hidden');
+    if (categoriesContainer) categoriesContainer.classList.add('hidden');
+    updateQuickSheetVisibility();
+}
+
+// Show quick-sheet button when the main logo is hidden, hide it when logo is visible
+function updateQuickSheetVisibility() {
+    const logoBrand = document.querySelector('.logo-brand');
+    const quickBtn = document.getElementById('quick-sheet-btn');
+    if (!quickBtn) return;
+    // If logo is hidden via the `.hidden` class or not visible, show quick sheet button
+    const logoHidden = logoBrand && logoBrand.classList.contains('hidden');
+    quickBtn.style.display = logoHidden ? 'inline-flex' : 'none';
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
 });
 
 // Initialize the application
 async function initializeApp() {
+    const categoriesBar = document.getElementById('categories-bar');
+    const categoryNav = document.querySelector('.category-nav');
+    const categoriesContainer = document.querySelector('.categories-container');
+    if (categoriesBar) categoriesBar.classList.remove('hidden');
+    if (categoryNav) categoryNav.classList.remove('hidden');
+    if (categoriesContainer) categoriesContainer.classList.remove('hidden');
     showLoading(true);
     try {
         await loadDataFromGoogleSheets();
@@ -23,10 +95,11 @@ async function initializeApp() {
         renderSeasonalProducts();
         updateCartCount();
         loadCart();
-        
+
         // Add event listeners
-        document.getElementById('search-input').addEventListener('input', searchProducts);
-        
+        const searchInput = document.getElementById('search-input');
+        if (searchInput) searchInput.addEventListener('input', searchProducts);
+
     } catch (error) {
         console.error('Error initializing app:', error);
         showNotification('Error loading products. Please try again.', 'error');

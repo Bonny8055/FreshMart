@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Quick Sheet — FreshMart</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body { background: #fff; color: #222; }
+        header, footer, .categories-bar, .products-grid, .ad-banner { display:none !important; }
+        .qs-root { display: flex; height: 100vh; overflow: hidden; }
+        .qs-categories { width: 80px; background: #f8f9fa; border-right: 1px solid #eee; display: flex; flex-direction: column; align-items: center; padding: 10px 0; overflow-y: auto; }
+        .qs-cat-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 0; width: 100%; border: none; background: none; cursor: pointer; color: var(--gray); font-size: 0.9rem; border-radius: 8px; transition: background 0.2s, color 0.2s; }
+        .qs-cat-btn.active, .qs-cat-btn:hover { background: #e8f5e9; color: var(--primary); }
+        .qs-cat-btn i { font-size: 1.5rem; }
+        .qs-main { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        .qs-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid #eee; background: #fff; }
+        .qs-title { font-size: 1.2rem; font-weight: 700; color: var(--primary); }
+        .qs-grid { flex: 1; overflow-y: auto; padding: 10px 8px 80px 8px; }
+        .qs-products { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; }
+        .qs-product { background: #fff; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 8px 6px 12px 6px; display: flex; flex-direction: column; align-items: center; position: relative; }
+        .qs-product img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; cursor: pointer; }
+        .qs-product-name { font-size: 0.95rem; font-weight: 600; margin: 6px 0 2px 0; text-align: center; }
+        .qs-product-price { color: var(--primary); font-weight: 700; font-size: 0.95rem; }
+        .qs-controls { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+        .qs-btn { background: var(--accent); color: #fff; border: none; border-radius: 50%; width: 28px; height: 28px; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s; }
+        .qs-btn:disabled { background: #eee; color: #bbb; cursor: not-allowed; }
+        .qs-qty { width: 32px; text-align: center; border: 1px solid #eee; border-radius: 6px; padding: 2px 0; font-size: 1rem; }
+        .qs-summary-bar { position: fixed; bottom: 0; left: 80px; right: 0; background: #fff; border-top: 1px solid #eee; box-shadow: 0 -2px 8px rgba(0,0,0,0.04); padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; z-index: 10; }
+        .qs-summary-bar .qs-total { font-weight: 700; font-size: 1.1rem; }
+        .qs-summary-bar .qs-place { background: #25D366; color: #fff; border: none; border-radius: 6px; padding: 10px 18px; font-weight: 700; font-size: 1rem; cursor: pointer; }
+        /* Modal */
+        .qs-modal-bg { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.25); align-items: center; justify-content: center; }
+        .qs-modal-bg.active { display: flex; }
+        .qs-modal { background: #fff; border-radius: 12px; max-width: 340px; width: 92vw; padding: 18px 12px 16px 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.18); position: relative; }
+        .qs-modal img { width: 100%; border-radius: 10px; margin-bottom: 10px; }
+        .qs-modal .close { position: absolute; top: 8px; right: 12px; font-size: 1.3rem; color: #888; background: none; border: none; cursor: pointer; }
+        .qs-modal .qs-modal-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+        .qs-modal .qs-modal-brand { color: var(--gray); font-size: 0.95rem; margin-bottom: 4px; }
+        .qs-modal .qs-modal-price { color: var(--primary); font-weight: 700; font-size: 1.1rem; margin-bottom: 6px; }
+        .qs-modal .qs-modal-desc { font-size: 0.97rem; color: #444; margin-bottom: 8px; }
+        .qs-modal .qs-modal-attr { font-size: 0.93rem; color: #666; margin-bottom: 2px; }
+        @media (max-width: 700px) {
+            .qs-root { flex-direction: column; }
+            .qs-categories { flex-direction: row; width: 100vw; height: 60px; border-right: none; border-bottom: 1px solid #eee; }
+            .qs-cat-btn { flex: 1; padding: 0; font-size: 0.85rem; }
+            .qs-main { height: calc(100vh - 60px); }
+            .qs-summary-bar { left: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="qs-root">
+        <nav class="qs-categories" id="qs-categories"></nav>
+        <main class="qs-main">
+            <div class="qs-header">
+                <div class="qs-title">Quick Sheet — Fast Ordering</div>
+                <a href="index.html" class="btn btn-red">Back</a>
+            </div>
+            <div class="qs-grid">
+                <div class="qs-products" id="qs-products"></div>
+            </div>
+            <div class="qs-summary-bar" id="qs-summary-bar">
+                <span class="qs-total" id="qs-total">Total: $0.00</span>
+                <button class="qs-place" id="qs-place">Place Order</button>
+            </div>
+        </main>
+        <div class="qs-modal-bg" id="qs-modal-bg">
+            <div class="qs-modal" id="qs-modal">
+                <button class="close" id="qs-modal-close">&times;</button>
+                <img id="qs-modal-img" src="" alt="Product">
+                <div class="qs-modal-title" id="qs-modal-title"></div>
+                <div class="qs-modal-brand" id="qs-modal-brand"></div>
+                <div class="qs-modal-price" id="qs-modal-price"></div>
+                <div class="qs-modal-desc" id="qs-modal-desc"></div>
+                <div class="qs-modal-attr" id="qs-modal-attr"></div>
+            </div>
+        </div>
+    </div>
+    <script src="data.js"></script>
+    <script>
+    // --- Mobile-first Zepto-style Quick Sheet ---
+    const PHONE = '9346145612';
+    let selectedCategory = categories[0]?.id || '';
+    const order = {};
+
+    // Category bar
+    const catBar = document.getElementById('qs-categories');
+    function renderCategories() {
+        catBar.innerHTML = '';
+        categories.forEach(cat => {
+            const btn = document.createElement('button');
+            btn.className = 'qs-cat-btn' + (cat.id === selectedCategory ? ' active' : '');
+            btn.innerHTML = `<i class="${getCatIcon(cat.id)}"></i><span>${cat.name.split('&')[0]}</span>`;
+            btn.onclick = () => { selectedCategory = cat.id; renderProducts(); renderCategories(); };
+            catBar.appendChild(btn);
+        });
+    }
+    function getCatIcon(id) {
+        // Map category id to FontAwesome icon
+        switch(id) {
+            case 'fruits': return 'fas fa-apple-alt';
+            case 'dairy': return 'fas fa-cheese';
+            case 'bakery': return 'fas fa-bread-slice';
+            case 'meat': return 'fas fa-drumstick-bite';
+            case 'beverages': return 'fas fa-wine-bottle';
+            case 'snacks': return 'fas fa-cookie-bite';
+            default: return 'fas fa-box';
+        }
+    }
+
+    // Product grid
+    const prodGrid = document.getElementById('qs-products');
+    function renderProducts() {
+        prodGrid.innerHTML = '';
+        const filtered = products.filter(p => p.category === selectedCategory);
+        filtered.forEach(p => {
+            const qty = order[p.id]?.qty || 0;
+            const prod = document.createElement('div');
+            prod.className = 'qs-product';
+            prod.innerHTML = `
+                <img src="${p.image}" alt="${p.name}" data-id="${p.id}" class="qs-img">
+                <div class="qs-product-name">${p.name}</div>
+                <div class="qs-product-price">$${(p.discount||p.price).toFixed(2)}</div>
+                <div class="qs-controls">
+                    <button class="qs-btn" data-id="${p.id}" data-action="minus" ${qty===0?'disabled':''}>-</button>
+                    <input class="qs-qty" type="text" value="${qty}" readonly>
+                    <button class="qs-btn" data-id="${p.id}" data-action="plus">+</button>
+                </div>
+            `;
+            prodGrid.appendChild(prod);
+        });
+        // Wire up controls
+        prodGrid.querySelectorAll('.qs-btn').forEach(btn => btn.onclick = onQtyBtn);
+        prodGrid.querySelectorAll('.qs-img').forEach(img => img.onclick = onImgClick);
+    }
+
+    function onQtyBtn(e) {
+        const id = Number(e.currentTarget.dataset.id);
+        const action = e.currentTarget.dataset.action;
+        const p = products.find(x => x.id === id);
+        if (!p) return;
+        if (!order[id]) order[id] = { product: p, qty: 0 };
+        if (action === 'plus') {
+            if (order[id].qty < p.stock) order[id].qty++;
+        } else if (action === 'minus') {
+            if (order[id].qty > 0) order[id].qty--;
+        }
+        if (order[id].qty === 0) delete order[id];
+        renderProducts();
+        renderSummaryBar();
+    }
+
+    // Summary bar
+    const summaryBar = document.getElementById('qs-summary-bar');
+    const totalEl = document.getElementById('qs-total');
+    const placeBtn = document.getElementById('qs-place');
+    function renderSummaryBar() {
+        const items = Object.values(order);
+        let total = 0;
+        items.forEach(i => { total += (i.product.discount||i.product.price) * i.qty; });
+        totalEl.textContent = 'Total: $' + total.toFixed(2);
+    }
+    placeBtn.onclick = function() {
+        const items = Object.values(order);
+        if (items.length === 0) { alert('Please add at least one item to your order'); return; }
+        let message = 'Quick Order from FreshMart:%0a%0a';
+        items.forEach(i => {
+            const price = i.product.discount || i.product.price;
+            message += `- ${i.product.name} (Qty: ${i.qty}) - $${(price * i.qty).toFixed(2)}%0a`;
+        });
+        const total = items.reduce((s,i)=> s + ((i.product.discount||i.product.price)*i.qty), 0);
+        message += `%0aTotal: $${total.toFixed(2)}%0a%0aPlease confirm availability and delivery time.`;
+        const url = `https://wa.me/${PHONE}?text=${encodeURIComponent(message)}`;
+        window.open(url, '_blank');
+    };
+
+    // Modal popup
+    const modalBg = document.getElementById('qs-modal-bg');
+    const modal = document.getElementById('qs-modal');
+    const modalImg = document.getElementById('qs-modal-img');
+    const modalTitle = document.getElementById('qs-modal-title');
+    const modalBrand = document.getElementById('qs-modal-brand');
+    const modalPrice = document.getElementById('qs-modal-price');
+    const modalDesc = document.getElementById('qs-modal-desc');
+    const modalAttr = document.getElementById('qs-modal-attr');
+    document.getElementById('qs-modal-close').onclick = () => modalBg.classList.remove('active');
+    function onImgClick(e) {
+        const id = Number(e.currentTarget.dataset.id);
+        const p = products.find(x => x.id === id);
+        if (!p) return;
+        modalImg.src = p.image;
+        modalTitle.textContent = p.name;
+        modalBrand.textContent = p.category ? 'Category: ' + (categories.find(c=>c.id===p.category)?.name || p.category) : '';
+        modalPrice.textContent = '$' + (p.discount||p.price).toFixed(2);
+        modalDesc.textContent = p.description || '';
+        let attr = '';
+        if (typeof p.stock !== 'undefined') attr += 'Stock: ' + p.stock + ' | ';
+        if (typeof p.seasonal !== 'undefined') attr += (p.seasonal ? 'Seasonal' : 'Regular') + ' | ';
+        modalAttr.textContent = attr.replace(/ \| $/, '');
+        modalBg.classList.add('active');
+    }
+
+    // Init
+    renderCategories();
+    renderProducts();
+    renderSummaryBar();
+    </script>
+</body>
+</html>

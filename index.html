@@ -6,41 +6,51 @@
     <title>FreshMart - Grocery Store</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
 </head>
 <body>
     <!-- Header -->
     <header>
-        <div class="container header-container">
-            <div class="logo">
-                <i class="fas fa-shopping-basket"></i>
-                <span>FreshMart</span>
+        <div class="container header-top">
+            <div class="logo-search-wrapper">
+                <div class="logo-brand">
+                    <i class="fas fa-shopping-basket"></i>
+                    <span>FreshMart</span>
+                </div>
+                <!-- Quick Sheet button: appears when the logo is hidden -->
+                <a id="quick-sheet-btn" href="quick-sheet.html" class="btn btn-outline" style="display: none;" title="Quick Sheet">
+                    <i class="fas fa-file-alt"></i>
+                </a>
+                
+                <div class="search-bar">
+                    <i class="fas fa-search search-icon" onclick="focusSearch()"></i> 
+                    
+                    <input type="text" id="search-input" placeholder="Search for groceries..." onfocus="expandSearch()" onblur="collapseSearch()">
+                    <i class="fas fa-times close-icon" onclick="clearSearch()" style="display: none;"></i>
+                </div>
             </div>
             
-            <div class="search-bar">
-                <i class="fas fa-search"></i>
-                <input type="text" id="search-input" placeholder="Search for groceries...">
-            </div>
-            
-            <nav>
-                <ul>
-                    <li><a href="#" class="active">Home</a></li>
-                    <li><a href="#" onclick="filterProducts('fruits')">Fruits & Vegetables</a></li>
-                    <li><a href="#" onclick="filterProducts('dairy')">Dairy & Eggs</a></li>
-                    <li><a href="#" onclick="filterProducts('bakery')">Bakery</a></li>
-                </ul>
-            </nav>
             <div class="header-actions">
-                <button class="btn btn-outline" onclick="openAdminPanel()">
-                    <i class="fas fa-user-cog"></i> Admin
-                </button>
                 <button class="btn btn-primary" onclick="openCart()">
                     <i class="fas fa-shopping-cart"></i> Cart (<span id="cart-count">0</span>)
                 </button>
             </div>
         </div>
-    </header>
 
-    <div class="container">
+        <!-- Categories bar (new): displays category shortcuts; will show/hide on scroll -->
+        <div class="categories-bar" id="categories-bar">
+            <div class="container categories-container">
+                <ul class="categories-list">
+                    <li><a href="#" onclick="filterProducts('all')"><i class="fas fa-home"></i><span>Home</span></a></li>
+                    <li><a href="#" onclick="filterProducts('fruits')"><i class="fas fa-apple-alt"></i><span>Fruits</span></a></li>
+                    <li><a href="#" onclick="filterProducts('dairy')"><i class="fas fa-cheese"></i><span>Dairy</span></a></li>
+                    <li><a href="#" onclick="filterProducts('bakery')"><i class="fas fa-bread-slice"></i><span>Bakery</span></a></li>
+                    <li><a href="#" onclick="filterProducts('dairy')"><i class="fas fa-cheese"></i><span>Dairy</span></a></li>
+                    
+                </ul>
+            </div>
+        </div>
+    </header>    <div class="container">
         <!-- Banner -->
         <section class="banner">
             <h1>Fresh Groceries Delivered to Your Door</h1>
@@ -122,7 +132,7 @@
     <!-- Footer -->
     <footer>
         <div class="container footer-container">
-            <div class="footer-col">
+            <!-- <div class="footer-col">
                 <h3>FreshMart</h3>
                 <p>Your local grocery store for fresh produce and household essentials.</p>
                 <div class="social-links">
@@ -130,9 +140,9 @@
                     <a href="#"><i class="fab fa-instagram"></i></a>
                     <a href="#"><i class="fab fa-twitter"></i></a>
                 </div>
-            </div>
+            </div> -->
             
-            <div class="footer-col">
+            <!-- <div class="footer-col">
                 <h3>Quick Links</h3>
                 <ul>
                     <li><a href="#">Home</a></li>
@@ -141,9 +151,9 @@
                     <li><a href="#">Delivery Areas</a></li>
                     <li><a href="#">Contact Us</a></li>
                 </ul>
-            </div>
+            </div> -->
             
-            <div class="footer-col">
+            <!-- <div class="footer-col">
                 <h3>Customer Service</h3>
                 <ul>
                     <li><a href="#">FAQs</a></li>
@@ -151,15 +161,23 @@
                     <li><a href="#">Returns & Refunds</a></li>
                     <li><a href="#">Terms of Service</a></li>
                 </ul>
-            </div>
+            </div> -->
             
             <div class="footer-col">
                 <h3>Contact Us</h3>
                 <ul>
-                    <li><i class="fas fa-map-marker-alt"></i> 123 Market St, City, Country</li>
-                    <li><i class="fas fa-phone"></i> +1 234 567 8900</li>
-                    <li><i class="fas fa-envelope"></i> info@freshmart.com</li>
-                    <li><i class="fab fa-whatsapp"></i> +1 234 567 8901</li>
+                    
+                    <p1>Your local grocery store for fresh produce and household essentials.</p1>
+
+                    <li><i class="fas fa-map-marker-alt"></i> Hyderabad, Temangana.</li>
+                    <!-- <li><i class="fas fa-phone"></i> +1 234 567 8900</li> -->
+                    <li><i class="fas fa-envelope"></i> tammalibhanuprakash23@gmail.com</li>
+                    <li><i class="fab fa-whatsapp"></i> 9346145612</li>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                    </div>
                 </ul>
             </div>
         </div>
@@ -167,8 +185,50 @@
         <div class="copyright">
             &copy; 2023 FreshMart. All rights reserved.
         </div>
+        
     </footer>
+    <!-- Scripts -->
+
 
     <script src="script.js"></script>
+    <script>
+        // Categories bar and page category-nav show/hide on scroll
+        (function(){
+            let lastScrollTopLocal = 0;
+            const categoriesBar = document.getElementById('categories-bar');
+            const categoryNav = document.querySelector('.category-nav');
+            const categoriesContainer = document.querySelector('.categories-container');
+            if (!categoriesBar) return;
+
+            // Small threshold to avoid jitter on minor scrolls
+            const THRESHOLD = 8;
+
+            window.addEventListener('scroll', function() {
+                const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+                const delta = currentScroll - lastScrollTopLocal;
+
+                if (Math.abs(delta) < THRESHOLD) {
+                    // ignore tiny movements
+                    return;
+                }
+
+                if (delta > 0) {
+                    // Scrolling down -> hide categories
+                    categoriesBar.classList.add('hidden');
+                    // keep page category-nav visible so users can always navigate categories
+                    if (categoriesContainer) categoriesContainer.classList.add('hidden');
+                } else {
+                    // Scrolling up -> show categories
+                    categoriesBar.classList.remove('hidden');
+                    if (categoriesContainer) categoriesContainer.classList.remove('hidden');
+                }
+
+                // Update quick sheet visibility in case logo visibility changes elsewhere
+                if (typeof updateQuickSheetVisibility === 'function') updateQuickSheetVisibility();
+
+                lastScrollTopLocal = currentScroll <= 0 ? 0 : currentScroll;
+            }, { passive: true });
+        })();
+    </script>
 </body>
 </html>
